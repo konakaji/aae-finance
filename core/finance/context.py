@@ -2,16 +2,6 @@ from core.finance.usecase import CoefficientUsecase
 from core.finance.repository import HistoryRepository, TickerRepository, CoefficientRepository
 from core.finance.api import HistoryApi, TickerAPI
 
-WORKING_DIR = ".."
-DOW_JONES_COMPONENTS_URL = "https://www.reinisfischer.com/dow-jones-companies-yield-2018"
-DOW_JONES_COMPONENTS_FILE = WORKING_DIR + "/data/external/dow_jones_2018_final.txt"
-DOW_JONES_HISTORICAL_DATA_FORMAT = WORKING_DIR + "/data/external/histories/{}.txt"
-DOW_JONES_HISTORICAL_MONTHLY_DATA_FORMAT = WORKING_DIR + "/data/external/histories/{}_monthly.txt"
-VISUALIZE_COEFFICIENT_FORMAT = WORKING_DIR + "/data/processed/coefficients/coefficient_{}_{}_{}.txt"
-COEFFICIENT_FILE_FORMAT = WORKING_DIR + "/data/processed/coefficients/coefficient_{}_{}_{}.npy"
-DATES_FILE = WORKING_DIR + "/data/processed/dates.txt"
-TICKS_FILE = WORKING_DIR + "/data/processed/ticks.txt"
-
 
 class Context:
     def __init__(self):

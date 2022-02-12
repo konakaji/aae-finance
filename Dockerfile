@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.6
 USER root
 
 RUN apt-get update
@@ -10,10 +10,9 @@ ENV LC_ALL ja_JP.UTF-8
 ENV TZ JST-9
 ENV TERM xterm
 
-RUN apt-get install -y vim less
+RUN apt-get install -y vim less git python3-dev gcc gfortran musl-dev
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
-RUN apt-get install git
 WORKDIR /root
 RUN git clone https://github.com/konakaji/aae-finance.git
 WORKDIR /root/aae-finance

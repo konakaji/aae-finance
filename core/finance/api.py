@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import urllib3, core.finance.context as c
+import urllib3, core.finance.const as c
 
 URL_FORMAT = "https://finance.yahoo.com/quote/{}/history?period1={}&period2={}&interval=1d&filter=history&frequency=1d"
 

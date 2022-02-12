@@ -1,6 +1,6 @@
 from core.finance.entity import History
 from core.finance.api import HistoryApi, TickerAPI
-import os, core.finance.context as c, numpy
+import os, core.finance.const as c, numpy
 
 
 class HistoryRepository:
