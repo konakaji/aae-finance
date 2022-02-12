@@ -1,4 +1,4 @@
--e git+https://github.com/konakaji/aae.git#egg=repo-0.0.8
+-e git+https://github.com/konakaji/aae.git#egg=aae-0.0.8
 appnope==0.1.2
 argon2-cffi==21.3.0
 argon2-cffi-bindings==21.2.0
@@ -96,7 +96,7 @@ qtconsole==5.2.2
 QtPy==2.0.1
 Quandl==3.6.0
 Qulacs==0.3.0
--e git+https://github.com/konakaji/qwrapper.git#egg=repo-0.0.11
+-e git+https://github.com/konakaji/qwrapper.git#egg=qwrapper-0.0.11
 requests==2.25.1
 requests-ntlm==1.1.0
 retworkx==0.11.0
