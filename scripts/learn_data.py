@@ -1,6 +1,7 @@
 # %%
 
 import sys, os
+
 sys.path.append("../")
 sys.path.append("../venv/lib/python3.8/site-packages")
 
@@ -10,7 +11,7 @@ from aae.core.optimizer import TransformingLRScheduler
 from core.finance.context import Context
 import random, numpy as np
 
-#%%
+# %%
 
 nqubit = 6
 layer = 12
@@ -21,6 +22,7 @@ ticks = ["XOM", "WMT", "PG", "MSFT",
          "GE", "T", "JNJ", "CVX"]
 MODEL_FORMAT = "../models/data_{}_{}_{}_{}.json"
 ENERGY_FORMAT = "../reports/energy/data_{}_{}_{}_{}.json"
+OVERLAP_FORMAT = "../reports/overlap/data_{}_{}_{}_{}.json"
 
 scheduler = TransformingLRScheduler(lr=0.1)
 scheduler.schedule(100, 0.01)
@@ -46,5 +48,7 @@ for index in range(START, FINISH + 1):
         overlap = abs(np.array(array).dot(np.array(vector)))
         print("overlap", overlap)
         print(training_method.get_cost(data_learning.sampler))
-        data_learning.save_model(MODEL_FORMAT.format(TIME_SPAN, index, layer, seed), overlap)
+        with open(OVERLAP_FORMAT.format(TIME_SPAN, index, layer, seed), "w") as w:
+            w.write(overlap)
+        data_learning.save_model(MODEL_FORMAT.format(TIME_SPAN, index, layer, seed))
         data_learning.save_cost_transition(ENERGY_FORMAT.format(TIME_SPAN, index, layer, seed))
