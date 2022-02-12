@@ -14,7 +14,7 @@ RUN apt-get install -y vim less
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 RUN apt-get install git
-WORKDIR ./root
+WORKDIR /root
 RUN git clone https://github.com/konakaji/aae-finance.git
 WORKDIR /root/aae-finance
 RUN pip install -r requirements.txt
