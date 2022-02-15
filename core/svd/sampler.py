@@ -1,16 +1,17 @@
 import json
-from aae.core.sampler import ParametrizedDefaultSampler, ParametrizedQiskitSamplerFactory, TENCircuitFactory, QISKIT, \
+from aae.core.sampler import ParametrizedDefaultSampler, ParametrizedDefaultSamplerFactory, TENCircuitFactory, QISKIT, \
     QULACS
 from aae.core.circuit import QiskitCircuit, QulacsCircuit
 from aae.core.exception import IllegalArgumentException
 from aae.core.circuit import RandomGates, TENCircuit
+from aae.extention.data_learning import DataLearning
 
 
 class SVDSampler(ParametrizedDefaultSampler):
-    def __init__(self, data_circuit: RandomGates, svd_circuit: TENCircuit, type=QISKIT):
-        super().__init__(svd_circuit, data_circuit.n_qubit)
-        self.data_circuit = data_circuit
-        self.n_qubit = data_circuit.n_qubit
+    def __init__(self, data_learning: DataLearning, svd_circuit: TENCircuit, type=QISKIT):
+        super().__init__(svd_circuit, data_learning.n)
+        self.data_learning = data_learning
+        self.n_qubit = data_learning.n
         self.type = type
 
     def name(self):
@@ -23,18 +24,18 @@ class SVDSampler(ParametrizedDefaultSampler):
             qc = QulacsCircuit(self.n_qubit)
         else:
             raise IllegalArgumentException("The type of the circuit is not supported.")
-        qc = self.data_circuit.merge(qc)
-        qc, q_register = self.circuit.merge(qc)
+        self.data_learning.add_data_gates(qc)
+        qc = self.circuit.merge(qc)
         return qc
 
 
-class SVDQiskitSamplerFactory(ParametrizedQiskitSamplerFactory):
-    def __init__(self, layer_count, data_circuit: RandomGates, type):
-        super().__init__(layer_count, data_circuit.n_qubit, type)
-        self.data_circuit = data_circuit
+class SVDSamplerFactory(ParametrizedDefaultSamplerFactory):
+    def __init__(self, layer_count, data_learning: DataLearning, type):
+        super().__init__(layer_count, data_learning.n, type)
+        self.data_learning = data_learning
 
     def _create_instance(self, circuit: TENCircuit, type=None):
-        return SVDSampler(self.data_circuit, circuit)
+        return SVDSampler(self.data_learning, circuit)
 
     def save(self, filename, sampler: SVDSampler, extra={}):
         with open(filename, "w") as f:
@@ -45,8 +46,8 @@ class SVDQiskitSamplerFactory(ParametrizedQiskitSamplerFactory):
                 parameters.append(p)
             data_directions = []
             data_parameters = []
-            for i, p in enumerate(sampler.data_circuit.parameters):
-                data_directions.append(sampler.circuit.directions[i])
+            for i, p in enumerate(self.data_learning.sampler.circuit.parameters):
+                data_directions.append(self.data_learning.sampler.circuit.directions[i])
                 data_parameters.append(p)
             result = {"name": sampler.name(),
                       "svd-circuit": {
@@ -58,12 +59,12 @@ class SVDQiskitSamplerFactory(ParametrizedQiskitSamplerFactory):
                       }, "data-circuit": {
                     "directions": data_directions,
                     "data_parameters": data_parameters,
-                    "n-qubit": sampler.data_circuit.n_qubit,
+                    "n-qubit": self.data_learning.n,
                     "extra": extra
                 }}
-            f.write(json.dumps(result))
+            f.write(json.dumps(result, indent=2))
 
-    def load(self, filename):
+    def load(self, filename, type):
         with open(filename) as f:
             map = json.loads(f.read())
             c = map["svd-circuit"]
@@ -73,4 +74,4 @@ class SVDQiskitSamplerFactory(ParametrizedQiskitSamplerFactory):
             if "layer_count" in c["extra"]:
                 self.layer_count = int(c["extra"]["layer_count"])
             circuit = TENCircuitFactory.do_generate(parameters, directions, self.n_qubit, n_a, n_a)
-            return self._create_instance(circuit)
+            return self._create_instance(circuit, type)

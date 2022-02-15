@@ -14,7 +14,7 @@ import random, numpy as np
 # %%
 
 nqubit = 6
-layer = 12
+layer = 13
 TIME_SPAN = 5
 START = 1
 FINISH = 7
@@ -30,11 +30,10 @@ scheduler.schedule(100, 0.01)
 context = Context()
 repository = context.get_coefficient_repository()
 context.get_history_repository()
-
-data_learning = DataLearning(nqubit, layer, type="qulacs")
-training_method = AAETrainingMethod(iteration=200, lr_scheduler=scheduler, idblock=False)
-for index in range(START, FINISH + 1):
-    for loop in range(0, 10):
+for loop in [1]:
+    for index in [5]:
+        data_learning = DataLearning(nqubit, layer, type="qulacs")
+        training_method = AAETrainingMethod(iteration=200, lr_scheduler=scheduler, idblock=False)
         date = repository.get_date(index)
         print("start_learning {}".format(date))
         seed = index + 31 * loop
@@ -49,6 +48,6 @@ for index in range(START, FINISH + 1):
         print("overlap", overlap)
         print(training_method.get_cost(data_learning.sampler))
         with open(OVERLAP_FORMAT.format(TIME_SPAN, index, layer, seed), "w") as w:
-            w.write(overlap)
+            w.write(str(overlap))
         data_learning.save_model(MODEL_FORMAT.format(TIME_SPAN, index, layer, seed))
         data_learning.save_cost_transition(ENERGY_FORMAT.format(TIME_SPAN, index, layer, seed))
