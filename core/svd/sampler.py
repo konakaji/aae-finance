@@ -3,7 +3,7 @@ from aae.core.sampler import ParametrizedDefaultSampler, ParametrizedDefaultSamp
     QULACS
 from aae.core.circuit import QiskitCircuit, QulacsCircuit
 from aae.core.exception import IllegalArgumentException
-from aae.core.circuit import RandomGates, TENCircuit
+from aae.core.circuit import TENCircuit
 from aae.extention.data_learning import DataLearning
 
 
@@ -13,6 +13,7 @@ class SVDSampler(ParametrizedDefaultSampler):
         self.data_learning = data_learning
         self.n_qubit = data_learning.n
         self.type = type
+        self.cache = None
 
     def name(self):
         return "CompositeSampler"
@@ -24,7 +25,14 @@ class SVDSampler(ParametrizedDefaultSampler):
             qc = QulacsCircuit(self.n_qubit)
         else:
             raise IllegalArgumentException("The type of the circuit is not supported.")
-        self.data_learning.add_data_gates(qc)
+        if self.type == QULACS:
+            if self.cache is None:
+                self.data_learning.add_data_gates(qc)
+                self.cache = qc.get_state()
+            else:
+                qc.state = self.cache
+        else:
+            self.data_learning.add_data_gates(qc)
         qc = self.circuit.merge(qc)
         return qc
 
@@ -35,7 +43,9 @@ class SVDSamplerFactory(ParametrizedDefaultSamplerFactory):
         self.data_learning = data_learning
 
     def _create_instance(self, circuit: TENCircuit, type=None):
-        return SVDSampler(self.data_learning, circuit)
+        if type is None:
+            type = self.type
+        return SVDSampler(self.data_learning, circuit, type)
 
     def save(self, filename, sampler: SVDSampler, extra={}):
         with open(filename, "w") as f:
@@ -55,6 +65,7 @@ class SVDSamplerFactory(ParametrizedDefaultSamplerFactory):
                           "parameters": parameters,
                           "extra": extra,
                           "n-a": sampler.circuit.n_a,
+                          "n-b": sampler.circuit.n_b,
                           "n-qubit": sampler.circuit.n_qubit
                       }, "data-circuit": {
                     "directions": data_directions,
@@ -71,7 +82,8 @@ class SVDSamplerFactory(ParametrizedDefaultSamplerFactory):
             directions = c["directions"]
             parameters = c["parameters"]
             n_a = c["n-a"]
+            n_b = c["n-b"]
             if "layer_count" in c["extra"]:
                 self.layer_count = int(c["extra"]["layer_count"])
-            circuit = TENCircuitFactory.do_generate(parameters, directions, self.n_qubit, n_a, n_a)
+            circuit = TENCircuitFactory.do_generate(parameters, directions, self.n_qubit, n_a, n_b)
             return self._create_instance(circuit, type)

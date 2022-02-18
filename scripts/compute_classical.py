@@ -9,7 +9,7 @@ def do_compute_classical(coefficient):
             for t, c in enumerate(coefficient[i]):
                 result[i][j] = result[i][j] + c * coefficient[j][t]
     r = 0
-    for v in np.linalg.eigvalsh(result):
+    for v in np.linalg.eigvals(result):
         if v < 0:
             continue
         r = r - v * math.log(v)

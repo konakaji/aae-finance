@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-import os
+from scripts.util import extract_best
 
 FOLDER = "reports"
 OVERLAP = FOLDER + "/overlap/"
@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 @app.route('/')
 def index():
     results = []
-    for filename in os.listdir(OVERLAP):
+    for d_index, filename in extract_best(OVERLAP, "rdata").items():
         items = filename.split("_")
         if len(items) != 5:
             continue
@@ -19,8 +19,8 @@ def index():
         layer = int(items[3])
         with open("{}{}".format(OVERLAP, filename)) as f:
             overlap = float(f.readlines()[0])
-            results.append((filename, data_index, layer, round(overlap, 2)))
-    results = sorted(results, key=lambda r: 31 * r[1] + r[2] + (1 - overlap) * 100)
+            results.append((filename, filename.replace("data", "svd"), data_index, layer, round(overlap, 2)))
+    results = sorted(results, key=lambda r: 31 * r[2] + r[3] + (1 - overlap) * 100)
     return render_template('index.html', results=results)
 
 

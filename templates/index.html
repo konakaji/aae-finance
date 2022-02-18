@@ -12,6 +12,7 @@
     <table class="table table-bordered table-striped">
         <thead>
         <th>file</th>
+        <th>svd</th>
         <th>data index</th>
         <th>layer count</th>
         <th>overlap</th>
@@ -19,12 +20,14 @@
         {% for r in results %}
         <tr>
             <td><a href="/energy/{{r[0]}}">{{ r[0] }}</a></td>
-            <td>{{ r[1] }}</td>
+            <td><a href="/energy/{{r[1]}}">{{ r[1]}}</a></td>
             <td>{{r[2]}}</td>
             <td>{{r[3]}}</td>
+            <td>{{r[4]}}</td>
         </tr>
         {% endfor %}
     </table>
+    <img width="1000" src="reports/images/entropy.png" />
 </div>
 </body>
 </html>
