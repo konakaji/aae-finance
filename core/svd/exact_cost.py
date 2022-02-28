@@ -1,6 +1,7 @@
 from aae.core.sampler import DefaultSampler
 from aae.core.exact_cost import Cost
 from aae.core.encoder import Encoder
+import numpy as np
 
 
 class SVDExactCost(Cost):
@@ -25,7 +26,6 @@ class SVDExactCost(Cost):
                     v = 1
                 result = result + p * (1 - v) / 2
         return result
-
 
 class V2SVDExactCost(Cost):
     def __init__(self, n_a, n_b, encoder: Encoder):

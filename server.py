@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 @app.route('/')
 def index():
     results = []
-    for d_index, filename in extract_best(OVERLAP, "rdata").items():
+    for d_index, filename in extract_best(OVERLAP, {"data", "400data", "50data", 'rdata'}).items():
         items = filename.split("_")
         if len(items) != 5:
             continue

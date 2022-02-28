@@ -20,7 +20,7 @@ def compute(prefix, entropy_file):
             for j, l in enumerate(f.readlines()):
                 random.seed(0)
                 datafile = l.rstrip()
-                svd_file = datafile.replace("data", prefix)
+                svd_file = "4" + datafile.replace("data", prefix)
                 dl.load(MODEL_PREFIX + datafile)
                 factory = SVDSamplerFactory(layer_count=12, data_learning=dl, type="qulacs")
                 sampler = factory.load(MODEL_PREFIX + svd_file, type="qulacs")
@@ -44,7 +44,7 @@ def compute(prefix, entropy_file):
                     eigens.append(p)
                     prob = prob + p
                 print(result, prob)
-                w.write("{}\t{}\t{}\n".format(repo.get_date(j), result, sorted(eigens, reverse=True)))
+                w.write("{}\t{}\t{}\n".format(repo.get_date(j + 4), result, sorted(eigens, reverse=True)))
             print("---------------")
 
 

@@ -37,6 +37,6 @@ values = []
 with open("../reports/classical.txt", "w") as f:
     for index in range(0, 8):
         coefficient = usecase.load(5, index, ticks)
-        date = repository.get_date(index)
+        date = repository.get_date(index + 4)
         value, eigens = do_compute_classical(coefficient, len(ticks), 4)
         f.write("{}\t{}\t{}\n".format(date, value, eigens))
